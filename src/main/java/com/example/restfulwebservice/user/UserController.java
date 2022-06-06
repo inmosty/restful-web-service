@@ -1,16 +1,25 @@
 package com.example.restfulwebservice.user;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @Slf4j
+@Data
 public class UserController {
 
     private UserDaoService service;
@@ -26,14 +35,20 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User retrieveUser(@PathVariable int id){
+    public ResponseEntity<EntityModel<User>> retrieveUser(@PathVariable int id){
         User user = service.findOne(id);
 
         if(user == null){
             log.info("user is null");
             throw new UserNotFoundException(String.format("ID[%s] not found",id));
         }
-        return user;
+
+        // HATEOAS
+        EntityModel entityModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+        entityModel.add(linkTo.withRel("all-users"));
+        return ResponseEntity.ok(entityModel);
     }
 
     @PostMapping("/users")
@@ -54,6 +69,21 @@ public class UserController {
         ResponseEntity<User> build = ResponseEntity.created(location).build();
         log.info("build = {}",build);
         return build;
+    }
+
+    @GetMapping("/users2")
+    public ResponseEntity<CollectionModel<EntityModel<User>>> retrieveUserList2() {
+        List<EntityModel<User>> result = new ArrayList<>();
+        List<User> users = service.findAll();
+
+        for (User user : users) {
+            EntityModel entityModel = EntityModel.of(user);
+            entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
+
+            result.add(entityModel);
+        }
+
+        return ResponseEntity.ok(CollectionModel.of(result, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel()));
     }
 
     @DeleteMapping("/users/{id}")
