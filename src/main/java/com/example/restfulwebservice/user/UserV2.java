@@ -14,7 +14,7 @@ import java.util.Date;
 @JsonFilter("UserInfoV2")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserV2 extends User{
+public class UserV2 extends UserInfo{
     private String grade;
 
 }

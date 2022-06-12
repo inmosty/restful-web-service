@@ -29,14 +29,14 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> retrieveAllUsers(){
-        List<User> user = service.findAll();
+    public List<UserInfo> retrieveAllUsers(){
+        List<UserInfo> user = service.findAll();
         return user;
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<EntityModel<User>> retrieveUser(@PathVariable int id){
-        User user = service.findOne(id);
+    public ResponseEntity<EntityModel<UserInfo>> retrieveUser(@PathVariable int id){
+        UserInfo user = service.findOne(id);
 
         if(user == null){
             log.info("user is null");
@@ -52,8 +52,8 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user){
-        User savedUser = service.save(user);
+    public ResponseEntity<UserInfo> createUser(@Valid @RequestBody UserInfo user){
+        UserInfo savedUser = service.save(user);
 
 
         // 사용자에게 요청 값을 변환해주기
@@ -66,17 +66,17 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
         log.info("location = {}",location);
-        ResponseEntity<User> build = ResponseEntity.created(location).build();
+        ResponseEntity<UserInfo> build = ResponseEntity.created(location).build();
         log.info("build = {}",build);
         return build;
     }
 
     @GetMapping("/users2")
-    public ResponseEntity<CollectionModel<EntityModel<User>>> retrieveUserList2() {
-        List<EntityModel<User>> result = new ArrayList<>();
-        List<User> users = service.findAll();
+    public ResponseEntity<CollectionModel<EntityModel<UserInfo>>> retrieveUserList2() {
+        List<EntityModel<UserInfo>> result = new ArrayList<>();
+        List<UserInfo> users = service.findAll();
 
-        for (User user : users) {
+        for (UserInfo user : users) {
             EntityModel entityModel = EntityModel.of(user);
             entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
 
@@ -88,7 +88,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable int id){
-        User user = service.deleteById(id);
+        UserInfo user = service.deleteById(id);
 
         if(user==null){
             throw new UserNotFoundException(String.format("ID[%s] not found",id));

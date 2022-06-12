@@ -16,3 +16,16 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+#  security:
+#   user:
+#     name: JKPARK
+#     password: 1234
+
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    jpa:
+      show-sql: true
+    h2:
+      console:
+        enabled: true
