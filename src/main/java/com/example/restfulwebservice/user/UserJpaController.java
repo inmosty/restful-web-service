@@ -20,6 +20,15 @@ HATEOAS는 RESTful API 구현의 최종 단계라 보시면 됩니다. 각각의
 ResponseEntity는 URI를 반환한다는 의미보다는, 요청한 클라이언트에게 리소스의 값이나 추가 헤더정보를 전달해주는 객체입니다.
 */
 
+/*ResponseEntity는 HttpEntity를 상속받아 구현된 것으로
+, 사용자 요청(HttpRequest)에 대한 응답 데이터를 처리하기 위해서 사용되며
+, HttpStatus, HttpHeaders, HttpBody를 포함하고 있습니다.
+EntityModel은 HATEOAS를 처리하기 위해 사용되며
+, 사용자 요청에 따른 반환값을 RESTful API의 Level3에 해당하는 HATEOAS 정보를 처리하는 데에 사용합니다.
+따라서, ResponseEntity와 EntityModel은 HATEOAS 기능의 사용 여부에 따라서 분리하면 좋을 것 같습니다.
+과정의 내용처럼 View를 Spring Boot 애플리케이션에 포함시키지 않고, 별도의 언어나 환경에서 개발하고
+, 서버와의 통신은 RESTful API로 하는 추세에서는 RESTful API를 생성한테 있어, Level 3를 지향하는 것이 바람직하다고 생각됩니다.
+그러나 사용자 요청에 따른 기본적인 CRUD 기능 만을 처리하는데 있어서, 굳이 HATEOAS까지 필요없다 생각되면, ResponseEntity만으로도 충분하지 않을까 싶습니다.*/
 @RestController
 @RequestMapping("/jpa")
 public class UserJpaController {
